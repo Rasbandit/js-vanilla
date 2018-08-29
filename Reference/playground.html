@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <header>
+    <figure>
+      <img src="https://vignette.wikia.nocookie.net/bravestwarriors/images/a/a4/Catbug_by_sircinnamon-d5riz9k.png/revision/latest/scale-to-width-down/150?cb=20130225010651"
+        alt="Im Cat Bug">
+    </figure>
+    <nav>
+      <li>Home</li>
+      <li>Shop</li>
+      <li>About</li>
+      <li>Contact</li>
+      <li id='hide'>❌</li>
+    </nav>
+  </header>
+  <h2 id="show">Show</h2>
+  <h1>Hover over me!</h1>
+  <button>Get Star Wars</button>
+  <div class="characters"></div>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      width: 100%;
+      height: 100px;
+      background: rebeccapurple;
+      padding: 10px 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      transition: top .25s ease;
+    }
+
+    figure {
+      height: 100%;
+    }
+
+    img {
+      height: 100%
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-evenly;
+      width: 300px;
+    }
+
+    li {
+      list-style: none;
+      color: whitesmoke;
+      font-size: 20px;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    h1 {
+      margin: 200px auto 100px auto;
+      text-align: center;
+      font-size: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wiggle {
+      transition: all .1s ease;
+    }
+
+    .wiggle:hover {
+      transform: scale(1.7);
+      color: deeppink;
+    }
+  </style>
+
+  <script>
+
+    const HEADER = document.querySelector('header')
+
+    let title = document.querySelector('h1');
+    title.innerHTML = title.innerText.split('').map((letter) => `<p class="wiggle">${letter !== ' ' ? letter : '&nbsp;'}</p>`).join('')
+
+    function randomNumber(max) {
+      return Math.floor(Math.random() * max)
+    }
+
+    document.querySelector('nav').addEventListener('click', (e) => {
+      e.target.style.color = `rgb(${randomNumber(255)}, ${randomNumber(255)}, ${randomNumber(255)})`;
+    })
+
+    document.querySelector('#hide').addEventListener('click', (e) => {
+      HEADER.style.top = '-100px';
+    })
+
+    document.querySelector('#show').addEventListener('click', (e) => {
+      HEADER.style.top = '0'
+    })
+
+    function loadSwapi() {
+      if (localStorage.getItem('characters')) {
+        const CHARACTERS = JSON.parse(localStorage.getItem('characters'));
+        displayCharacters(CHARACTERS)
+      }
+      else {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          const characters = JSON.parse(this.response).results
+          localStorage.setItem('characters', JSON.stringify(characters))
+          displayCharacters(characters)
+        };
+        xhttp.open("GET", "https://swapi.co/api/people");
+        xhttp.send();
+      }
+    }
+
+    function displayCharacters(characters) {
+      const HTML = characters.map(character =>
+        `
+          <div class="character">
+            <h3>${character.name}</h3>
+          </div>
+          `
+      ).join('')
+      document.querySelector('.characters').innerHTML = HTML
+    }
+
+    document.querySelector('button').addEventListener('click', loadSwapi)
+
+  </script>
+</body>
+
+</html>
